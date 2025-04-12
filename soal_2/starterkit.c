@@ -1,4 +1,4 @@
-#include <stdio.h>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      starterkit.c                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        #include <stdio.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <dirent.h>
@@ -241,10 +241,7 @@ int run_shell_script(const char *script_path) {
         return -1;
     }
     else if (pid == 0) {
-        // Child process - jalankan script
         execl("/bin/sh", "sh", script_path, NULL);
-
-        // Jika sampai sini berarti exec gagal
         perror("execl failed");
         _exit(1);
     }
@@ -267,12 +264,12 @@ void create_download_script() {
     }
 
     fprintf(script, "#!/bin/sh\n");
-    fprintf(script, "echo 'Downloading starter kit...'\n");
-    fprintf(script, "if ! wget --quiet --show-progress \"%s\" -O temp.zip; then\n", ZIP_URL);
+    fprintf(script, "echo 'Downloading starterkit.zip'\n");
+    fprintf(script, "if ! wget --quiet \"%s\" -O temp.zip; then\n", ZIP_URL);
     fprintf(script, "    echo 'Download failed' >&2\n");
     fprintf(script, "    exit 1\n");
     fprintf(script, "fi\n");
-    fprintf(script, "echo 'Unzipping...'\n");
+    fprintf(script, "echo 'Unzipping'\n");
     fprintf(script, "if ! unzip -q temp.zip -d starter_kit; then\n");
     fprintf(script, "    echo 'Unzip failed' >&2\n");
     fprintf(script, "    rm temp.zip\n");
@@ -294,7 +291,7 @@ int is_dir_empty(const char *path) {
     int count = 0;
     struct dirent *entry;
     while ((entry = readdir(dir)) != NULL) {
-        if (++count > 2) break; 
+        if (++count > 2) break;
     }
     closedir(dir);
     return count <= 2;
@@ -311,8 +308,7 @@ int main(int argc, char *argv[]) {
 
     if (argc < 2 || (strcmp(argv[1], " ")) == 0) {
         if (is_dir_empty("starter_kit")) {
-            printf("Preparing starter kit...\n");
-          
+
             create_download_script();
 
             if (run_shell_script(DOWNLOAD) != 0) {
@@ -320,9 +316,9 @@ int main(int argc, char *argv[]) {
                 remove(DOWNLOAD);
                 exit(EXIT_FAILURE);
             }
-          
+
             remove(DOWNLOAD);
-            write_log("Download", "", "Starter kit downloaded and extracted", getpid());
+            write_log("Download" , " ", "Starter kit downloaded and extracted", getpid());
         }
     }
     else if (strcmp(argv[1], "--decrypt") == 0){
@@ -353,4 +349,3 @@ int main(int argc, char *argv[]) {
     }
    return EXIT_SUCCESS;
 }
-
