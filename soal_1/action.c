@@ -212,7 +212,6 @@ void decode_file() {
     printf("Your pass is ready sir\n");
 }
 
-// Main handler
 int main(int argc, char *argv[]) {
     if (argc == 3 && strcmp(argv[1], "-m") == 0) {
         if (strcmp(argv[2], "Filter") == 0) {
