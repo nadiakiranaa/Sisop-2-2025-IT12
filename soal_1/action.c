@@ -41,7 +41,7 @@ void run_command(const char *cmd, char *const argv[]) {
 
 void download_and_extract() {
     if (directory_exists(CLUES_DIR)) {
-        printf("Folder '%s' sudah ada\n", CLUES_DIR);
+        printf("Folder '%s' sudah ada king\n", CLUES_DIR);
         return;
     }
 
