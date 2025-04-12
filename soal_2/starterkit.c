@@ -1,4 +1,4 @@
-#include <stdio.h>
+  GNU nano 8.3                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              starterkit.c                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <dirent.h>
@@ -160,7 +160,7 @@ void start_decrypt_daemon() {
 
     while (1) {
         decrypt_filenames();
-        sleep(5); // Check setiap 5 detik
+        sleep(5);
     }
 }
 
@@ -305,11 +305,6 @@ int is_dir_empty(const char *path) {
 }
 
 int main(int argc, char *argv[]) {
-    if (argc < 2) {
-        fprintf(stderr, "Usage: %s --decrypt|--quarantine|--return|--eradicate|--shutdown <PID>\n", argv[0]);
-        return EXIT_FAILURE;
-    }
-
     // Buat direktori jika belum ada
     struct stat st = {0};
    if (stat("quarantine", &st) == -1) {
@@ -319,7 +314,7 @@ int main(int argc, char *argv[]) {
         mkdir("starter_kit", 0755);
     }
 
-    if (strcmp(argv[1], "--decrypt") == 0) {
+    if (argc < 2 || (strcmp(argv[1], " ")) == 0) {
         // Jika starter_kit kosong, download dan unzip
         if (is_dir_empty("starter_kit")) {
             printf("Preparing starter kit...\n");
@@ -338,8 +333,9 @@ int main(int argc, char *argv[]) {
             remove(DOWNLOAD);
             write_log("Download", "", "Starter kit downloaded and extracted", getpid());
         }
+    }
+    else if (strcmp(argv[1], "--decrypt") == 0){
 
-        // Mulai daemon decrypt
         start_decrypt_daemon();
     }
     else if (strcmp(argv[1], "--quarantine") == 0) {
@@ -353,16 +349,17 @@ int main(int argc, char *argv[]) {
     }
     else if (strcmp(argv[1], "--shutdown") == 0) {
         if (argc != 3) {
-            fprintf(stderr, "Usage: %s --shutdown <PID>\n", argv[0]);
+            fprintf(stderr, "Invalid tidak ada <PID>\n");
             return EXIT_FAILURE;
         }
         pid_t pid = atoi(argv[2]);
         shutdown_daemon(pid);
     }
     else {
-        fprintf(stderr, "Invalid option: %s\n", argv[1]);
-        fprintf(stderr, "Usage: %s --decrypt|--quarantine|--return|--eradicate|--shutdown <PID>\n", argv[0]);
+        fprintf(stderr, "Opsi invalid\n");
+        fprintf(stderr, "Argumen tidak valid\n");
         return EXIT_FAILURE;
     }
    return EXIT_SUCCESS;
 }
+
