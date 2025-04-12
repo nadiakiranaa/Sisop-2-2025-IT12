@@ -1,4 +1,3 @@
-
 #define _GNU_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
@@ -68,74 +67,23 @@ void log_process(const char *process_name) {
 void daemonize() {
     pid_t pid = fork();
     if (pid < 0) exit(EXIT_FAILURE);
-    if (pid > 0) exit(EXIT_SUCCESS); // Parent
+    if (pid > 0) exit(EXIT_SUCCESS); 
 
-    // Child
+    
     umask(0);
     setsid();
 
-    if (chdir("/home/nadia/Sisop-2-2025-IT12/soal_4/") < 0) exit(EXIT_FAILURE);
+    if (chdir("/home/nadia/Sisop-2-2025-IT12/soal_4") < 0) exit(EXIT_FAILURE);
 
     fclose(stdin);
     fclose(stdout);
     fclose(stderr);
 
-    open("/dev/null", O_RDONLY);  // stdin
-    open("/dev/null", O_WRONLY);  // stdout
-    open("/dev/null", O_RDWR);    // stderr
+    open("/dev/null", O_RDONLY);  
+    open("/dev/null", O_WRONLY); 
+    open("/dev/null", O_RDWR);   
 }
 
-// void monitor_user_processes_daemon(const char *username) {
-//     uid_t uid = get_uid_by_name(username);
-
-//     while (1) {
-//         DIR *proc = opendir(PROC_DIR);
-//         if (!proc) {
-//             sleep(5);
-//             continue;
-//         }
-
-//         struct dirent *entry;
-//         while ((entry = readdir(proc)) != NULL) {
-//             if (!is_numeric(entry->d_name)) continue;
-
-//             int pid = atoi(entry->d_name);
-//             char path[256], line[256];
-//             FILE *fp;
-//             uid_t proc_uid;
-//             char comm[256] = "-";
-
-//             // Ambil UID
-//             snprintf(path, sizeof(path), PROC_DIR"/%d/status", pid);
-//             fp = fopen(path, "r");
-//             if (!fp) continue;
-
-//             while (fgets(line, sizeof(line), fp)) {
-//                 if (sscanf(line, "Uid: %d", &proc_uid) == 1) break;
-//             }
-//             fclose(fp);
-
-//             if (proc_uid != uid) continue;
-
-//             // Ambil nama proses
-//             snprintf(path, sizeof(path), PROC_DIR"/%d/comm", pid);
-//             fp = fopen(path, "r");
-//             if (fp) {
-//                 fgets(comm, sizeof(comm), fp);
-//                 comm[strcspn(comm, "\n")] = 0;
-//                 fclose(fp);
-//             }
-
-//             // Hanya log jika processnya adalah debugmon
-//             if (strcmp(comm, "debugmon") == 0) {
-//                 log_process(comm);  // log setiap loop
-//             }
-//         }
-
-//         closedir(proc);
-//         sleep(5);
-//     }
-// }
 
 void monitor_user_processes_daemon(const char *username, int fail_mode) {
     uid_t uid = get_uid_by_name(username);
@@ -157,7 +105,7 @@ void monitor_user_processes_daemon(const char *username, int fail_mode) {
             uid_t proc_uid;
             char comm[256] = "-";
 
-            // Ambil UID
+            
             snprintf(path, sizeof(path), PROC_DIR"/%d/status", pid);
             fp = fopen(path, "r");
             if (!fp) continue;
@@ -168,7 +116,7 @@ void monitor_user_processes_daemon(const char *username, int fail_mode) {
             fclose(fp);
             if (proc_uid != uid) continue;
 
-            // Ambil nama proses
+            
             snprintf(path, sizeof(path), PROC_DIR"/%d/comm", pid);
             fp = fopen(path, "r");
             if (fp) {
@@ -180,7 +128,7 @@ void monitor_user_processes_daemon(const char *username, int fail_mode) {
             if (strcmp(comm, "debugmon") == 0) {
                 log_process(comm);
             } else if (fail_mode) {
-                // Kill and log other processes
+                
                 if (kill(pid, SIGKILL) == 0) {
                     log_failed_process(comm);
                 }
@@ -210,7 +158,7 @@ void stop_debugmon_daemon_only(const char *username) {
         char path[256], line[1024], exe_path[256];
         uid_t proc_uid;
 
-        // Ambil UID
+        
         snprintf(path, sizeof(path), PROC_DIR"/%d/status", pid);
         FILE *fp = fopen(path, "r");
         if (!fp) continue;
@@ -221,7 +169,7 @@ void stop_debugmon_daemon_only(const char *username) {
         fclose(fp);
         if (proc_uid != uid) continue;
 
-        // Cek apakah path executable mengandung "debugmon"
+        
         snprintf(exe_path, sizeof(exe_path), PROC_DIR"/%d/exe", pid);
         char actual_path[256];
         ssize_t len = readlink(exe_path, actual_path, sizeof(actual_path) - 1);
@@ -230,7 +178,7 @@ void stop_debugmon_daemon_only(const char *username) {
 
         if (!strstr(actual_path, "debugmon")) continue;
 
-        // Baca cmdline
+        
         snprintf(path, sizeof(path), PROC_DIR"/%d/cmdline", pid);
         fp = fopen(path, "r");
         if (!fp) continue;
@@ -239,7 +187,7 @@ void stop_debugmon_daemon_only(const char *username) {
 
         line[read_bytes] = '\0';
 
-        // Pisahkan argumen berdasarkan null-byte
+        
         char *args[10];
         int argc = 0;
         char *ptr = line;
@@ -248,10 +196,10 @@ void stop_debugmon_daemon_only(const char *username) {
             ptr += strlen(ptr) + 1;
         }
 
-        // Validasi: ./debugmon daemon <user>
+       
         if (argc >= 3 &&
             strstr(args[0], "debugmon") &&
-            strcmp(args[1], "daemon") == 0 &&
+           
             strcmp(args[2], username) == 0) {
 
             if (kill(pid, SIGTERM) == 0) {
@@ -332,10 +280,10 @@ int main(int argc, char *argv[]) {
         stop_debugmon_daemon_only(argv[2]);
     } else if (argc == 3 && strcmp(argv[1], "fail") == 0) {
         daemonize();
-        monitor_user_processes_daemon(argv[2], 1);  // mode fail aktif
+        monitor_user_processes_daemon(argv[2], 1); 
 
     } else if (argc == 3 && strcmp(argv[1], "revert") == 0) {
-        stop_debugmon_daemon_only(argv[2]);  // matikan daemon fail
+        stop_debugmon_daemon_only(argv[2]);  
     } else {
         printf("Usage:\n");
         printf("  %s list <user>\n", argv[0]);
