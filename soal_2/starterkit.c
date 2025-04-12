@@ -1,4 +1,4 @@
-  GNU nano 8.3                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              starterkit.c                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        #include <stdio.h>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      starterkit.c                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <dirent.h>
@@ -249,7 +249,6 @@ int run_shell_script(const char *script_path) {
         _exit(1);
     }
     else {
-        // Parent process - tunggu script selesai
         int status;
         waitpid(pid, &status, 0);
 
@@ -260,7 +259,6 @@ int run_shell_script(const char *script_path) {
     }
 }
 
-// Fungsi untuk membuat script download dan unzip
 void create_download_script() {
     FILE *script = fopen(DOWNLOAD, "w");
     if (!script) {
@@ -286,26 +284,23 @@ void create_download_script() {
 
     fclose(script);
 
-    // Berikan permission execute
     chmod(DOWNLOAD, 0755);
 }
 
-// Fungsi untuk memeriksa apakah direktori kosong
 int is_dir_empty(const char *path) {
     DIR *dir = opendir(path);
-    if (dir == NULL) return 1; // Anggap kosong jika tidak bisa dibuka
+    if (dir == NULL) return 1;
 
     int count = 0;
     struct dirent *entry;
     while ((entry = readdir(dir)) != NULL) {
-        if (++count > 2) break; // . dan ..
+        if (++count > 2) break; 
     }
     closedir(dir);
     return count <= 2;
 }
 
 int main(int argc, char *argv[]) {
-    // Buat direktori jika belum ada
     struct stat st = {0};
    if (stat("quarantine", &st) == -1) {
         mkdir("quarantine", 0755);
@@ -315,21 +310,17 @@ int main(int argc, char *argv[]) {
     }
 
     if (argc < 2 || (strcmp(argv[1], " ")) == 0) {
-        // Jika starter_kit kosong, download dan unzip
         if (is_dir_empty("starter_kit")) {
             printf("Preparing starter kit...\n");
-
-            // Buat script download
+          
             create_download_script();
 
-            // Jalankan script
             if (run_shell_script(DOWNLOAD) != 0) {
                 fprintf(stderr, "Failed to setup starter kit\n");
                 remove(DOWNLOAD);
                 exit(EXIT_FAILURE);
             }
-
-            // Hapus script setelah selesai
+          
             remove(DOWNLOAD);
             write_log("Download", "", "Starter kit downloaded and extracted", getpid());
         }
