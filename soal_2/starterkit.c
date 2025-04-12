@@ -306,7 +306,7 @@ int main(int argc, char *argv[]) {
         mkdir("starter_kit", 0755);
     }
 
-    if (argc < 2 || (strcmp(argv[1], " ")) == 0) {
+    if (argc < 2) {
         if (is_dir_empty("starter_kit")) {
 
             create_download_script();
