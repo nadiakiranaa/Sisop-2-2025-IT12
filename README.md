@@ -16,6 +16,7 @@
 ## Soal-3
 ## Soal-4
 A. Menampilkan daftar semua proses yang sedang berjalan pada user tersebut beserta PID, command, CPU usage, dan memory usage.
+
 ./debugmon list <user>
 ```
 if (argc == 3 && strcmp(argv[1], "list") == 0) {
