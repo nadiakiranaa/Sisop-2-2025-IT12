@@ -24,7 +24,8 @@ if (argc == 3 && strcmp(argv[1], "list") == 0) {
 }
 ```
 
-B. Memasang mata-mata dalam mode daemon agar Debugmon terus memantau user secara otomatis &  dan melakukan pencatatan ke dalam file log dengan menjalankan:
+B. Memasang mata-mata dalam mode daemon agar Debugmon terus memantau user secara otomatis &  dan melakukan pencatatan ke dalam file log dengan menjalankan: 
+
 ./debugmon daemon <user> & cat debugmon.log
 ```
 else if (argc == 3 && strcmp(argv[1], "daemon") == 0) {
@@ -34,6 +35,7 @@ else if (argc == 3 && strcmp(argv[1], "daemon") == 0) {
 ```
 
 C. Menghentikan pengawasan.
+
 ./debugmon stop <user>
 ```
 else if (argc == 3 && strcmp(argv[1], "stop") == 0) {
@@ -42,6 +44,7 @@ else if (argc == 3 && strcmp(argv[1], "stop") == 0) {
 ```
 
 D. Menggagalkan semua proses user yang sedang berjalan & user juga tidak bisa menjalankan proses lain dalam mode ini.
+
 ./debugmon fail <user>
 ```
 else if (argc == 3 && strcmp(argv[1], "fail") == 0) {
@@ -58,6 +61,7 @@ if (fail_mode) {
 ```
 
 E. Mengizinkan user untuk kembali menjalankan proses.
+
 ./debugmon revert <user>
 ```
 else if (argc == 3 && strcmp(argv[1], "revert") == 0) {
