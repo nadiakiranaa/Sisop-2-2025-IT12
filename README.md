@@ -201,9 +201,9 @@ void decode_file() {
 
 E. Password Check
 
-nah, berdasarkan decode menggunakan ROT13 didapatkan passwordnya yaitu [password](assets/vercel.png)
+nah, berdasarkan decode menggunakan ROT13 didapatkan passwordnya yaitu [password](test/vercel.png)
 
-eh [realpassfr](assets/pass.png) lalu kita masukkan ke dalam [sini🐉](https://dragon-pw-checker.vercel.app/).
+eh [realpassfr](test/pass.png) lalu kita masukkan ke dalam [sini🐉](https://dragon-pw-checker.vercel.app/).
 
 Done sir ^^
 
