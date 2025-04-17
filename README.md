@@ -39,8 +39,11 @@ void download_and_extract() {
     printf("Done sir, Folder '%s' resdy to launch\n", CLUES_DIR);
     }
 ```
+``bool directory_exists()`` adalah deklarasi fungsi yang menerima argumen path berupa string path ke folder, dan akan mengembalikan true jika folder tersebut ada, false jika tidak. ``struct stat st`` Membuat variabel st dari struct stat. Struct ini digunakan untuk menyimpan informasi tentang file atau direktori ``stat(path, &st)`` Memanggil fungsi stat() untuk mengisi struct st dengan informasi tentang file/direktori yang ada di path. ``S_ISDIR(st.st_mode)`` Mengecek apakah path tersebut adalah direktori (bukan file biasa). Fungsi makro ini membaca st_mode dan mengonfirmasi apakah itu direktori. ``char *wget_args[]`` Menyusun argumen untuk menjalankan perintah wget, `-q` berarti quiet mode (nggak print output), `-O Clues.zip` berarti output-nya disimpan ke file `Clues.zip`.
+
 B. Filtering the Files
 
+Karena kebanyakan dari file tersebut berawal dengan 1 huruf atau angka, kamu pun mencoba untuk memindahkan file-file yang hanya dinamakan dengan 1 huruf dan 1 angka tanpa special character kedalam folder bernama Filtered. Kamu tidak suka kalau terdapat banyak clue yang tidak berguna jadi disaat melakukan filtering, file yang tidak terfilter dihapus. Karena kamu tidak ingin membuat file kode lagi untuk filtering, maka kamu menggunakan file sebelumnya untuk filtering file-file tadi dengan menambahkan argumen saat ingin menjalankan action.c
 ```
 bool is_valid_filename(const char *filename) {
     regex_t regex;
@@ -88,10 +91,12 @@ void filter_files() {
     }
     printf("Filtering selesai. Silahkan cek folder '%s'\n", FILTER_DIR);
     }
-
 ```
+``regex`` struktur data untuk ekspresi reguler `(regex_t)`. `regcomp()` → meng-compile regex `^[a-zA-Z0-9]\\.txt$`. `regexec` menjalankan regex terhadap filename. `if (!directory_exists(FILTER_DIR))` Cek apakah folder Filtered (dalam FILTER_DIR) sudah ada, Jika belum, buat folder tersebut dengan permission 0755 (rwxr-xr-x). ``struct dirent *entry`` pointer untuk menyimpan setiap file dalam folder. `src_path` path lengkap ke file sumber. `dest_path` path tujuan untuk file yang dipindah. ``while ((entry = readdir(dir)) != NULL) {}`` Baca isi folder satu per satu hingga habis. ``if (entry->d_type == DT_REG){}`` Jika entri yang dibaca dari folder adalah file biasa, maka lanjutkan proses di dalam blok if ini. ``snprintf(src_path, sizeof(src_path), "%s/%s", subdirs[i], fname)`` Ambil nama file dan buat path lengkap ke file sumber (src_path). ``if (is_valid_filename(fname))`` Jika nama file valid (seperti 1.txt, a.txt). `rename(src_path, dest_path);` Pindahkan file dari src_path ke dest_path menggunakan rename().
+
 C. Combine the File Content
 
+Di setiap file .txt yang telah difilter terdapat satu huruf dan agar terdapat progress, Cyrus memberikan clue tambahan untuk meletakan/redirect isi dari setiap `.txt` file tersebut kedalam satu file yaitu Combined.txt dengan menggunakan FILE pointer. Tetapi, terdapat urutan khusus saat redirect isi dari .txt tersebut, yaitu urutannya bergantian dari .txt dengan nama angka lalu huruf lalu angka lagi lalu huruf lagi. Lalu semua file .txt sebelumnya dihapus.
 ```
 void combine_files() {
     DIR *dir = opendir(FILTER_DIR);
