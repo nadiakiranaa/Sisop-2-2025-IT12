@@ -165,9 +165,11 @@ void combine_files() {
     printf("Done capt, semua file telah digabung ke Combined.txt\n");
     }
 ```
+`DIR *dir = opendir(FILTER_DIR);` Membuka folder Filtered, jika gagal akan menampilkan pesan "Gagal membuka folder Filtered". `entry` digunakan untuk membaca setiap file dalam folder. `angka_files[]` menyimpan nama file yang diawali dengan angka. `huruf_files[]` menyimpan nama file yang diawali dengan huruf. `while ((entry = readdir(dir)) != NULL)` Melakukan loop pada semua isi folder Filtered. `if (entry->d_type == DT_REG && strstr(entry->d_name, ".txt")) {}` Hanya lanjut jika file biasa (DT_REG) dan punya ekstensi `.txt`. `if (isdigit(entry->d_name[0]))` Jika nama file diawali angka, simpan ke angka_files, begitupun dengan huruf. `strdup` membuat salinan string (karena pointer yang dikembalikan readdir tidak bisa disimpan langsung). `FILE *combined = fopen("Combined.txt", "w")` Membuka (atau membuat) file Combined.txt untuk ditulis. `while (a < angka_count || h < huruf_count)` Loop selama masih ada file angka atau huruf yang belum diproses. `if (a < angka_count)` Mengecek apakah masih ada file yang namanya diawali angka yang belum diproses. `snprintf(filepath, sizeof(filepath), "%s/%s", FILTER_DIR, angka_files[a])` Fungsi snprintf() menulis string ke dalam array filepath dengan aman (tidak melebihi 512 karakter), Format string-nya adalah: "%s/%s" artinya FOLDER/NAMAFILE. `FILE *src = fopen(filepath, "r");` Membuka file yang path-nya tersimpan dalam filepath. `while ((ch = fgetc(src)) != EOF)` Fungsi fgetc(src) membaca 1 karakter dari file yang terbuka, Loop terus berjalan selama belum mencapai EOF (End of File). `fputc(ch, combined)` Menuliskan karakter ch yang dibaca ke file Combined.txt (file yang terbuka dan ditulis sebelumnya). 
 
 D. Decode the file
 
+Karena isi Combined.txt merupakan string yang random, kamu memiliki ide untuk menggunakan Rot13 untuk decode string tersebut dan meletakan hasil dari yang telah di-decode tadi kedalam file bernama Decoded.txt.
 ```
 void decode_file() {
     FILE *src = fopen("Combined.txt", "r");
@@ -195,12 +197,13 @@ void decode_file() {
     printf("Your pass is ready sir\n");
     }
 ```
+`FILE *src = fopen("Combined.txt", "r")` Membuka file Combined.txt untuk dibaca ("r" = read), FILE *src adalah pointer ke file sumber (source). `FILE *dest = fopen("Decoded.txt", "w")`  Membuka atau membuat file Decoded.txt untuk ditulis ("w" = write), FILE *dest adalah pointer ke file tujuan (destination). `while ((ch = fgetc(src)) != EOF)` selama belum mencapai akhir file, loop akan terus berjalan.
 
 E. Password Check
 
-nah, berdasarkan decode menggunakan ROT13 didapatkan passwordnya yaitu [password](assets/asa.png)
+nah, berdasarkan decode menggunakan ROT13 didapatkan passwordnya yaitu [password](assets/vercel.png)
 
-eh [realpassfr](123.png) lalu kita masukkan ke dalam [sini🐉](https://dragon-pw-checker.vercel.app/).
+eh [realpassfr](assets/pass.png) lalu kita masukkan ke dalam [sini🐉](https://dragon-pw-checker.vercel.app/).
 
 Done sir ^^
 
