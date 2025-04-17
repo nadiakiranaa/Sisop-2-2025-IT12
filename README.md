@@ -208,12 +208,12 @@ int main(int argc, char *argv[]) {
 
     pid = fork();
     if (pid < 0) exit(EXIT_FAILURE);
-    if (pid > 0) exit(EXIT_SUCCESS); // Parent pertama keluar
+    if (pid > 0) exit(EXIT_SUCCESS); 
 
     umask(0);
     sid = setsid();
     if (sid < 0) exit(EXIT_FAILURE);
-    if ((chdir(".")) < 0) exit(EXIT_FAILURE); // Gunakan current directory
+    if ((chdir(".")) < 0) exit(EXIT_FAILURE); 
 
     close(STDIN_FILENO);
     close(STDOUT_FILENO);
@@ -221,7 +221,6 @@ int main(int argc, char *argv[]) {
 ```
 B. Mengganti namanya menjadi /init. 
 ```
-// Rename proses ke /init
 void rename_process(int argc, char *argv[], const char *new_name) {
     strncpy(argv[0], new_name, strlen(argv[0]));
     for (int i = 1; i < argc; i++) {
@@ -229,8 +228,9 @@ void rename_process(int argc, char *argv[], const char *new_name) {
     }
 }
 ```
+```
  rename_process(argc, argv, "/init");
- ```
+```
 ## Soal-4
 A. Menampilkan daftar semua proses yang sedang berjalan pada user tersebut beserta PID, command, CPU usage, dan memory usage.
 
