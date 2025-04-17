@@ -201,7 +201,7 @@ Done sir ^^
 
 ## Soal-2
 ## Soal-3
-A. Malware ini bekerja secara daemon
+A. - Malware ini bekerja secara daemon
 ```
 int main(int argc, char *argv[]) {
     pid_t pid, sid;
@@ -219,7 +219,7 @@ int main(int argc, char *argv[]) {
     close(STDOUT_FILENO);
     close(STDERR_FILENO);
 ```
-B. Mengganti namanya menjadi /init. 
+ - Mengganti namanya menjadi /init. 
 ```
 void rename_process(int argc, char *argv[], const char *new_name) {
     strncpy(argv[0], new_name, strlen(argv[0]));
