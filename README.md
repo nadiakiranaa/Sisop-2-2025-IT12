@@ -368,6 +368,144 @@ char* base64_decode(const char* input) {
     return decoded;
 }
 ```
+c. Membuat directory quarantine dan memindahkan file ke directory tersebut serta mengembalikan kembali ke directory starter_kit
+```
+void move_files(const char *src_dir, const char *dest_dir, const char *action) {
+    DIR *dir;
+    struct dirent *entry;
+    char src_path[MAX_PATH], dest_path[MAX_PATH];
+
+    dir = opendir(src_dir);
+    if (dir == NULL) {
+        perror("Failed to open source directory");
+        exit(EXIT_FAILURE);
+    }
+
+    mkdir(dest_dir, 0755);
+
+    while ((entry = readdir(dir)) != NULL) {
+        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
+            continue;
+
+        snprintf(src_path, sizeof(src_path), "%s/%s", src_dir, entry->d_name);
+        snprintf(dest_path, sizeof(dest_path), "%s/%s", dest_dir, entry->d_name);
+
+        if (rename(src_path, dest_path) != 0) {
+            perror("Failed to move file");
+            continue;
+        }
+
+        write_log(action, entry->d_name, "Successfully moved", 0);
+    }
+
+    closedir(dir);
+}
+```
+D. Menghapus seluruh file dengan eradicate
+```
+void move_files(const char *src_dir, const char *dest_dir, const char *action) {
+    DIR *dir;
+    struct dirent *entry;
+    char src_path[MAX_PATH], dest_path[MAX_PATH];
+
+    dir = opendir(src_dir);
+    if (dir == NULL) {
+        perror("Failed to open source directory");
+        exit(EXIT_FAILURE);
+    }
+
+    mkdir(dest_dir, 0755);
+
+    while ((entry = readdir(dir)) != NULL) {
+        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
+            continue;
+
+        snprintf(src_path, sizeof(src_path), "%s/%s", src_dir, entry->d_name);
+        snprintf(dest_path, sizeof(dest_path), "%s/%s", dest_dir, entry->d_name);
+
+        if (rename(src_path, dest_path) != 0) {
+            perror("Failed to move file");
+            continue;
+        }
+
+        write_log(action, entry->d_name, "Successfully moved", 0);
+    }
+
+    closedir(dir);
+}
+```
+E. Mematikan decrypt yang berjalan terus dengan shutdown
+```
+void shutdown_daemon(pid_t pid) {
+    if (kill(pid, SIGTERM) != 0) {
+        perror("Failed to kill process");
+        exit(EXIT_FAILURE);
+    }
+
+    write_log("Shutdown", "", "Successfully shut off", pid);
+    printf("Successfully shut off decryption process with PID %d\n", pid);
+}
+
+int run_shell_script(const char *script_path) {
+    pid_t pid = fork();
+
+    if (pid == -1) {
+        perror("fork failed");
+        return -1;
+    }
+    else if (pid == 0) {
+        execl("/bin/sh", "sh", script_path, NULL);
+        perror("execl failed");
+        _exit(1);
+    }
+    else {
+        int status;
+        waitpid(pid, &status, 0);
+
+        if (WIFEXITED(status)) {
+            return WEXITSTATUS(status);
+        }
+        return -1;
+    }
+}
+```
+F. Mengecek error
+```
+if (argc < 2) {
+...
+}else if (argc == 2){
+...
+}else {
+        fprintf(stderr, "Opsi invalid\n");
+        fprintf(stderr, "Argumen tidak valid\n");
+        return EXIT_FAILURE;
+}
+```
+G. Write activity.log
+```
+void write_log(const char *action, const char *filename, const char *status, pid_t pid) {
+    time_t now;
+    time(&now);
+    struct tm *local = localtime(&now);
+
+    char timestamp[20];
+    strftime(timestamp, sizeof(timestamp), "[%d-%m-%Y][%H:%M:%S]", local);
+
+    FILE *log = fopen(LOG_FILE, "a");
+    if (log == NULL) {
+        perror("Failed to open log file");
+        return;
+    }
+
+    if (strcmp(action, "Decrypt") == 0 || strcmp(action, "Shutdown") == 0) {
+        fprintf(log, "%s - %s %s process with PID %d.\n", timestamp, status, action, pid);
+    } else {
+        fprintf(log, "%s - %s - %s %s.\n", timestamp, filename, status, action);
+    }
+
+    fclose(log);
+}
+```
 ## Soal-3
 A. - Malware ini bekerja secara daemon
 ```
