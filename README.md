@@ -238,6 +238,7 @@ void create_download_script() {
     chmod(DOWNLOAD, 0755);
 }
 ```
+Pada poin ini, script membuka file ``DOWNLOAD`` yang telah didefine menjadi sebuah file dengan format ``.sh``. Dalam file tersebut akan melakukan download menggunakan ``wget`` dari link yang telah diberikan yang disimpan dalam ``ZIP_URL`` dan disimpan dalam nama ``temp.zip``. ``temp.zip`` akan di-unzip dan dipindahkan ke dir ``starter_kit``. Setelah itu, file ``temp.zip`` akan di remove. 
 B. Melakukan decrypt 
 ```
 void start_decrypt_daemon() {
