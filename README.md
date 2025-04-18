@@ -300,7 +300,31 @@ F. Mencatat ke dalam file log.
 void log_process(...) { fprintf(... "_RUNNING"); }
 void log_failed_process(...) { fprintf(... "_FAILED"); }
 ```
+## Hasil Output
+A. Menampilkan daftar semua proses yang sedang berjalan pada user 
+![WhatsApp Image 2025-04-18 at 11 55 04_23a6153a](https://github.com/user-attachments/assets/4c04e338-ad66-4f38-bbc5-0ba7303575a3)
 
+B. Menjalankan debugmon secara daemon
+![WhatsApp Image 2025-04-18 at 11 55 23_9b8c5dc9](https://github.com/user-attachments/assets/78442b89-3899-4b20-bad9-939450b42734)
+
+![WhatsApp Image 2025-04-18 at 11 57 03_55602212](https://github.com/user-attachments/assets/cd89a358-ec8f-41a7-9344-0d02a5c478f6)
+
+C. Menghentikan proses daemon
+![WhatsApp Image 2025-04-18 at 11 56 24_de4cffbb](https://github.com/user-attachments/assets/c4981069-37ae-47f2-a9bf-19d0e4de661c)
+
+![WhatsApp Image 2025-04-18 at 11 57 37_81245656](https://github.com/user-attachments/assets/62ecf708-179c-415c-9d28-940eaf6c3d8b)
+
+E. User terblock dan tidak bisa melakukan apa apa
+![WhatsApp Image 2025-04-18 at 11 58 23_dacd799e](https://github.com/user-attachments/assets/1a7c440a-0adb-4d23-83f1-12369646c07f)
+
+![WhatsApp Image 2025-04-18 at 11 59 28_8af92f65](https://github.com/user-attachments/assets/96431001-b4ed-483d-a847-054ba2effc8f)
+
+D. Command ini untuk mengembalikan user agar tidak terblock dan bisa menggunakan terminal kembali
+![WhatsApp Image 2025-04-18 at 12 02 20_1afee52a](https://github.com/user-attachments/assets/e8c53981-6053-45a7-b33b-a8f0cd202ddb)
+
+ Mencatat ke dalam file log
+![WhatsApp Image 2025-04-18 at 12 03 24_b7bbb8de](https://github.com/user-attachments/assets/1b59f77d-5e81-49b7-a85e-60521d795046)
+![WhatsApp Image 2025-04-18 at 12 03 52_47227615](https://github.com/user-attachments/assets/075f3cce-d133-47b0-ab68-97d709541572)
 
 
 
