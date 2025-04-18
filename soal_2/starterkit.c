@@ -320,8 +320,8 @@ int main(int argc, char *argv[]) {
             remove(DOWNLOAD);
             write_log("Download" , " ", "Starter kit downloaded and extracted", getpid());
         }
-    }
-    else if (strcmp(argv[1], "--decrypt") == 0){
+    }else if (argc == 2){
+    if (strcmp(argv[1], "--decrypt") == 0){
 
         start_decrypt_daemon();
     }
@@ -333,6 +333,7 @@ int main(int argc, char *argv[]) {
     }
     else if (strcmp(argv[1], "--eradicate") == 0) {
         eradicate_files();
+    }
     }
     else if (strcmp(argv[1], "--shutdown") == 0) {
         if (argc != 3) {
