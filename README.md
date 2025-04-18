@@ -239,6 +239,15 @@ void rename_process(int argc, char *argv[], const char *new_name) {
 ```
  rename_process(argc, argv, "/init");
 ```
+## Hasil Output 
+A. Membuat folder malware.c
+![WhatsApp Image 2025-04-18 at 12 27 40_a5345e70](https://github.com/user-attachments/assets/03191d59-a67a-42e3-b1e3-476a21ed4e7e)
+
+Mengganti namanya menjadi /init
+![WhatsApp Image 2025-04-18 at 12 28 00_6a9c5289](https://github.com/user-attachments/assets/8c791bce-939d-4087-a9a9-da576c557a6f)
+
+
+
 ## Soal-4
 A. Menampilkan daftar semua proses yang sedang berjalan pada user tersebut beserta PID, command, CPU usage, dan memory usage.
 
