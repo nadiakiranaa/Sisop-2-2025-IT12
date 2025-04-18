@@ -309,7 +309,9 @@ B. Menjalankan debugmon secara daemon
 ![WhatsApp Image 2025-04-18 at 11 57 03_55602212](https://github.com/user-attachments/assets/cd89a358-ec8f-41a7-9344-0d02a5c478f6)
 
 C. Menghentikan proses daemon
+
 ![WhatsApp Image 2025-04-18 at 11 56 24_de4cffbb](https://github.com/user-attachments/assets/c4981069-37ae-47f2-a9bf-19d0e4de661c)
+
 ![WhatsApp Image 2025-04-18 at 11 57 37_81245656](https://github.com/user-attachments/assets/62ecf708-179c-415c-9d28-940eaf6c3d8b)
 
 E. User terblock dan tidak bisa melakukan apa apa
@@ -318,8 +320,11 @@ E. User terblock dan tidak bisa melakukan apa apa
 
 D. Command ini untuk mengembalikan user agar tidak terblock dan bisa menggunakan terminal kembali
 ![WhatsApp Image 2025-04-18 at 12 02 20_1afee52a](https://github.com/user-attachments/assets/e8c53981-6053-45a7-b33b-a8f0cd202ddb)
+
  Mencatat ke dalam file log
+ 
 ![WhatsApp Image 2025-04-18 at 12 03 24_b7bbb8de](https://github.com/user-attachments/assets/1b59f77d-5e81-49b7-a85e-60521d795046)
+
 ![WhatsApp Image 2025-04-18 at 12 03 52_47227615](https://github.com/user-attachments/assets/075f3cce-d133-47b0-ab68-97d709541572)
 
 
