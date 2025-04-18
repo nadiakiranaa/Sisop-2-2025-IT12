@@ -240,7 +240,7 @@ void rename_process(int argc, char *argv[], const char *new_name) {
  rename_process(argc, argv, "/init");
 ```
 ## Hasil Output 
-A. Membuat folder malware.c
+A. Membuat folder malware
 
 ![WhatsApp Image 2025-04-18 at 12 27 40_a5345e70](https://github.com/user-attachments/assets/03191d59-a67a-42e3-b1e3-476a21ed4e7e)
 
