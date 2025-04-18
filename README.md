@@ -208,6 +208,166 @@ eh [realpassfr](test/pass.png) lalu kita masukkan ke dalam [sini🐉](https://dr
 Done sir ^^
 
 ## Soal-2
+A. Mendowload, unzip, remove zip file
+```
+void create_download_script() {
+    FILE *script = fopen(DOWNLOAD, "w");
+    if (!script) {
+        perror("Failed to create download script");
+   exit(EXIT_FAILURE);
+    }
+
+    fprintf(script, "#!/bin/sh\n");
+    fprintf(script, "echo 'Downloading starterkit.zip'\n");
+    fprintf(script, "if ! wget --quiet \"%s\" -O temp.zip; then\n", ZIP_URL);
+    fprintf(script, "    echo 'Download failed' >&2\n");
+    fprintf(script, "    exit 1\n");
+    fprintf(script, "fi\n");
+    fprintf(script, "echo 'Unzipping'\n");
+    fprintf(script, "if ! unzip -q temp.zip -d starter_kit; then\n");
+    fprintf(script, "    echo 'Unzip failed' >&2\n");
+    fprintf(script, "    rm temp.zip\n");
+    fprintf(script, "    exit 1\n");
+    fprintf(script, "fi\n");
+    fprintf(script, "rm temp.zip\n");
+    fprintf(script, "echo 'Done!'\n");
+    fprintf(script, "exit 0\n");
+
+    fclose(script);
+
+    chmod(DOWNLOAD, 0755);
+}
+```
+B. Melakukan decrypt 
+```
+void start_decrypt_daemon() {
+    pid_t pid = fork();
+
+    if (pid < 0) {
+        perror("Failed to fork");
+        exit(EXIT_FAILURE);
+    }
+
+    if (pid > 0) {
+        printf("Decryption daemon started with PID: %d\n", pid);
+        write_log("Decrypt", "", "Successfully started", pid);
+        exit(EXIT_SUCCESS);
+    }
+
+    umask(0);
+    setsid();
+    close(STDIN_FILENO);
+    close(STDOUT_FILENO);
+    close(STDERR_FILENO);
+
+    while (1) {
+        decrypt_filenames();
+        sleep(5);
+    }
+}
+```
+```
+void decrypt_filenames() {
+    DIR *dir;
+    struct dirent *entry;
+    char old_path[MAX_PATH], new_path[MAX_PATH];
+
+   dir = opendir("quarantine");
+    if (dir == NULL) {
+        perror("Failed to open quarantine directory");
+        exit(EXIT_FAILURE);
+    }
+
+    while ((entry = readdir(dir)) != NULL) {
+        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
+            continue;
+
+        char *decoded = base64_decode(entry->d_name);
+        if (decoded == NULL) {
+            fprintf(stderr, "Failed to decode filename: %s\n", entry->d_name);
+            continue;
+        }
+
+        snprintf(old_path, sizeof(old_path), "quarantine/%s", entry->d_name);
+        snprintf(new_path, sizeof(new_path), "quarantine/%s", decoded);
+
+        if (rename(old_path, new_path) != 0) {
+            perror("Failed to rename file");
+            free(decoded);
+            continue;
+        }
+
+        write_log("Decrypt", decoded, "Successfully decrypted", getpid());
+        free(decoded);
+    }
+
+    closedir(dir);
+}
+```
+```
+char* base64_decode(const char* input) {
+    const char base64_table[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+    int input_len = strlen(input);
+    char *decoded = malloc(input_len);
+    int i = 0, j = 0;
+    unsigned char char_array_4[4], char_array_3[3];
+    int decoded_len = 0;
+
+    if (input_len % 4 != 0) {
+        fprintf(stderr, "Invalid Base64 input length\n");
+        free(decoded);
+        return NULL;
+    }
+
+    while (input_len-- && input[i] != '=') {
+        char_array_4[j++] = input[i++];
+        if (j == 4) {
+            for (j = 0; j < 4; j++) {
+                char *pos = strchr(base64_table, char_array_4[j]);
+                if (pos == NULL) {
+                    free(decoded);
+                    return NULL;
+                }
+                char_array_4[j] = pos - base64_table;
+            }
+
+            char_array_3[0] = (char_array_4[0] << 2) + ((char_array_4[1] & 0x30) >> 4);
+            char_array_3[1] = ((char_array_4[1] & 0x0f) << 4) + ((char_array_4[2] & 0x3c) >> 2);
+            char_array_3[2] = ((char_array_4[2] & 0x03) << 6) + char_array_4[3];
+
+            for (j = 0; j < 3; j++) {
+                decoded[decoded_len++] = char_array_3[j];
+            }
+            j = 0;
+        }
+    }
+
+    if (j > 0) {
+        for (int k = j; k < 4; k++)
+            char_array_4[k] = 0;
+
+        for (int k = 0; k < 4; k++) {
+            char *pos = strchr(base64_table, char_array_4[k]);
+            if (pos == NULL) {
+                free(decoded);
+                return NULL;
+            }
+            char_array_4[k] = pos - base64_table;
+        }
+
+        char_array_3[0] = (char_array_4[0] << 2) + ((char_array_4[1] & 0x30) >> 4);
+        char_array_3[1] = ((char_array_4[1] & 0x0f) << 4) + ((char_array_4[2] & 0x3c) >> 2);
+        char_array_3[2] = ((char_array_4[2] & 0x03) << 6) + char_array_4[3];
+
+        for (int k = 0; k < j - 1; k++) {
+            decoded[decoded_len++] = char_array_3[k];
+        }
+    }
+
+    decoded[decoded_len] = '\0';
+    return decoded;
+}
+```
 ## Soal-3
 A. - Malware ini bekerja secara daemon
 ```
